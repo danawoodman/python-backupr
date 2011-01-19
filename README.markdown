@@ -33,7 +33,7 @@ The available keyword options are as follows:
 - `db_user` -- *Required* -- The username of your database.
 - `db_pw` -- The password of your database. -- *Default: `''`*
 - `db_host` -- The host of your database. -- *Default: `'127.0.0.1'`*
-- `backup_path` -- The location you want to store the backup file. Can be relative (e.g. `../foobar/` or absolute `/home/user/foobar/`) -- *Default: `''`*
+- `backup_path` -- The location you want to store the backup file. Can be relative (e.g. `../foobar/`) or absolute (e.g. `/home/user/foobar/`). Relative links will be relative to where the `backupr.py` file is located. -- *Default: `''`*
 - `send_success_email` -- Whether or not to send an email when a backup is successfully run. -- *Default: `False`*
 - `to_address` -- The address to send the success email to. Optional if no success email is desired. -- *Default: `None`*
 - `gmail_user` -- The GMail username (e.g. `'myusername@gmail.com`) to use when sending the email. Optional if no success email is desired. -- *Default: `None`*
