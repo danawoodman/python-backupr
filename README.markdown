@@ -2,9 +2,13 @@
 
 ## Description
 
-Make a backup of a MySQL database and send an email through a Gmail account.
+Make a backup of a MySQL database and send an (optional) success email through a GMail account.
 
-This method will create a SQL dump of the given MySQL database, tar (compress) the file up and save the file to the local file system.
+This method will create a SQL dump of the given MySQL database, tar (compress) the file up and save the file to the local file system. 
+
+Depending on the options you pass it, it will delete the SQL dump after your compress it and send you a (cute) email letting you know what happened and where the file was saved. The email will also have the Tar file attached to it so you have a backup on your email server in addition to the local file system.
+
+The backups are named with the name of the DB, and the timestamp it was run so you can easily grab a specific backup.
 
 
 ## Usage
@@ -13,7 +17,12 @@ Usage is strait forward, just put the `backupr.py` file on the `PythonPath` and 
 
     import backupr
     
-    backupr.make_backup('my_db_name', 'my_db_user', 'my_db_pass', to_address='john@example.com', gmail_user='myusername@gmail.com', gmail_pw='mygmailpassword')
+    backupr.make_backup('my_db_name', 
+                'my_db_user', 
+                'my_db_pass', 
+                to_address='john@example.com', 
+                gmail_user='myusername@gmail.com', 
+                gmail_pw='mygmailpassword')
 
 
 ## Available Keywords
@@ -41,6 +50,12 @@ This method will give you some responses when running from the command line to l
 Both a plain text and HTML email are sent to be compatible with email clients that cannot handle HTML emails.
 
 This repo could be forked to add support for different email sending methods but since GMail is so ubiquitous and since is makes it so easy to send emails from (without depending on the local machine to do it), I chose it as the method to send success emails from.
+
+
+## To-Do
+
+* Have an option to not attach the Tar file to the email (especially useful on big DBs).
+* Enable remote backups? (use scp or something?)
 
 
 ## License
