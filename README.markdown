@@ -15,17 +15,22 @@ The backups are named with the name of the DB, and the timestamp it was run so y
 
 Usage is strait forward, just put the `backupr.py` file on the `PythonPath` and then import it and run the `make_backup` method:
 
+    import sys
+    sys.path.append('/home/user/backupr/')
+    
     import backupr
     
     backupr.make_backup('my_db_name', 
                 'my_db_user', 
                 'my_db_pass', 
+                send_success_email=True,
                 to_address='john@example.com', 
                 gmail_user='myusername@gmail.com', 
                 gmail_pw='mygmailpassword')
 
+... where `'/home/user/backupr/'` is the path to the directory that contains the `backupr.py` file (your git checkout of python-backupr). 
 
-## Available Keywords
+## Available Keywords Arguments
 
 The available keyword options are as follows:
                 
