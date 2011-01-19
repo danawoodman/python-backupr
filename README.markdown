@@ -39,6 +39,7 @@ The available keyword options are as follows:
 - `gmail_user` -- *String* -- The GMail username (e.g. `'myusername@gmail.com'`) to use when sending the email. Optional if no success email is desired. -- *Default: `None`*
 - `gmail_pw` -- *String* -- The GMail password for your account so we can send emails from GMail. Optional if no success email is desired. -- *Default: `None`*
 - `remove_sql` -- *Boolean* -- Whether or not to keep the SQL dump after it has been compressed. This is useful if you have the need to run the SQL directly after a backup or for debugging. -- *Default: `True`*
+- `attach_tar` -- *Boolean* -- Whether or not to attach the compressed tar file to the success email. -- *Default: `True`*
 
 
 ## Notes & Caveats
@@ -54,7 +55,6 @@ This repo could be forked to add support for different email sending methods but
 
 ## To-Do
 
-* Have an option to not attach the Tar file to the email (especially useful on big DBs).
 * Enable remote backups? (use scp or something?)
 
 
