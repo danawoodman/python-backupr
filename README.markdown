@@ -29,16 +29,16 @@ Usage is strait forward, just put the `backupr.py` file on the `PythonPath` and 
 
 The available keyword options are as follows:
                 
-* `db_name` -- *Required* -- The name of your database.
-* `db_user` -- *Required* -- The username of your database.
-* `db_pw` -- *Default: `''`* -- The password of your database.
-* `db_host` -- *Default: `'127.0.0.1'`* -- The host of your database.
-* `backup_path` -- *Default: `''`* -- The location you want to store the backup file. Can be relative (e.g. `../foobar/` or absolute `/home/user/foobar/`)
-* `send_success_email` -- *Default: `True`* -- Whether or not to send an email when a backup is successfully run.
-* `to_address` -- *Default: `None`* -- The address to send the success email to. Optional if no success email is desired.
-* `gmail_user` -- *Default: `None`* -- The GMail username (e.g. `'myusername@gmail.com`) to use when sending the email. Optional if no success email is desired.
-* `gmail_pw` -- *Default: `None`* -- The GMail password for your account so we can send emails from GMail. Optional if no success email is desired.
-* `remove_sql` -- *Default: `True`* -- Whether or not to keep the SQL dump after it has been compressed. This is useful if you have the need to run the SQL directly after a backup or for debugging.
+- `db_name` -- *Required* -- The name of your database.
+- `db_user` -- *Required* -- The username of your database.
+- `db_pw` -- The password of your database. -- *Default: `''`*
+- `db_host` -- The host of your database. -- *Default: `'127.0.0.1'`*
+- `backup_path` -- The location you want to store the backup file. Can be relative (e.g. `../foobar/` or absolute `/home/user/foobar/`) -- *Default: `''`*
+- `send_success_email` -- Whether or not to send an email when a backup is successfully run. -- *Default: `False`*
+- `to_address` -- The address to send the success email to. Optional if no success email is desired. -- *Default: `None`*
+- `gmail_user` -- The GMail username (e.g. `'myusername@gmail.com`) to use when sending the email. Optional if no success email is desired. -- *Default: `None`*
+- `gmail_pw` -- The GMail password for your account so we can send emails from GMail. Optional if no success email is desired. -- *Default: `None`*
+- `remove_sql` -- Whether or not to keep the SQL dump after it has been compressed. This is useful if you have the need to run the SQL directly after a backup or for debugging. -- *Default: `True`*
 
 
 ## Notes & Caveats
