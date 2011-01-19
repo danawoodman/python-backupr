@@ -36,7 +36,7 @@ The available keyword options are as follows:
 - `backup_path` -- The location you want to store the backup file. Can be relative (e.g. `../foobar/`) or absolute (e.g. `/home/user/foobar/`). Relative links will be relative to where the `backupr.py` file is located. -- *Default: `''`*
 - `send_success_email` -- Whether or not to send an email when a backup is successfully run. -- *Default: `False`*
 - `to_address` -- The address to send the success email to. Optional if no success email is desired. -- *Default: `None`*
-- `gmail_user` -- The GMail username (e.g. `'myusername@gmail.com`) to use when sending the email. Optional if no success email is desired. -- *Default: `None`*
+- `gmail_user` -- The GMail username (e.g. `'myusername@gmail.com'`) to use when sending the email. Optional if no success email is desired. -- *Default: `None`*
 - `gmail_pw` -- The GMail password for your account so we can send emails from GMail. Optional if no success email is desired. -- *Default: `None`*
 - `remove_sql` -- Whether or not to keep the SQL dump after it has been compressed. This is useful if you have the need to run the SQL directly after a backup or for debugging. -- *Default: `True`*
 
