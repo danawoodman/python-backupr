@@ -98,8 +98,8 @@ def confirm(prompt=None, resp=False):
             return False
 
 def make_backup(db_name, db_user, db_pw='', db_host='127.0.0.1', backup_path='', 
-                send_success_email=True, to_address=None, gmail_user=None, 
-                gmail_pw=None, remove_sql=True):
+                send_success_email=False, to_address=None, gmail_user=None, 
+                gmail_pw=None, remove_sql=True, attach_tar=True):
     """
     Make a backup of a MySQL database and send an email through a Gmail account.
     
@@ -168,33 +168,38 @@ def make_backup(db_name, db_user, db_pw='', db_host='127.0.0.1', backup_path='',
                 print '\nError removing SQL file: %s' % e
         
         # Construct email messages.
-        msg_text = """Dear Master,\n\nYour backup of the database '%s'scheduled \
-for %s ran successfully!\n\nThe back up is stored here:\n %s\
-\n\nThe backup is also attached to this email.\
-\n\nLove,\nYour Robotic Servant""" % (db_name, now_string, os.path.abspath(backup_full_path_tar))
+        msg_text = """Dear Master,\n\nYour backup of the database '%s' on %s ran successfully!
+
+The back up is stored here:\n %s %s
+
+Love,
+Your Robotic Servant""" % (db_name, now_string, 
+                                os.path.abspath(backup_full_path_tar), 
+                                '\n\nThe backup is also attached to this email.' if attach_tar else '')
         msg_html = """
         
         <p><em>Dear Master,</em></p>
         
-        <p>Your backup of the database '<em>%s</em>' scheduled for <strong>%s</strong> ran successfully!</p>
+        <p>Your backup of the database '<em>%s</em>' on <strong>%s</strong> ran successfully!</p>
         
         <p>
             The back up is stored here: <br />
             <em>%s</em>
         </p>
         
-        <p>The backup is also attached to this email.</p>
+        %s
         
         <p><em>Love,</em></p>
         
         <p><strong>Your Robotic Servant</strong></p>
         
-        """ % (db_name, now_string, os.path.abspath(backup_full_path_tar))
+        """ % (db_name, now_string, os.path.abspath(backup_full_path_tar), 
+                '<p>The backup is also attached to this email.</p>' if attach_tar else '')
         
         # Send message.
         if send_success_email and to_address and gmail_user and gmail_pw:
             mail(gmail_user, gmail_pw, to_address, 'Backup successfully run!', 
-                msg_text, msg_html, backup_full_path_tar)
+                msg_text, msg_html, backup_full_path_tar if attach_tar else '')
         
         print "\nYour backup is complete!\n"
         
