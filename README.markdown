@@ -1,0 +1,48 @@
+# python-backupr
+
+## Description
+
+Make a backup of a MySQL database and send an email through a Gmail account.
+
+This method will create a SQL dump of the given MySQL database, tar (compress) the file up and save the file to the local file system.
+
+
+## Usage
+
+Usage is strait forward, just put the `backupr.py` file on the `PythonPath` and then import it and run the `make_backup` method:
+
+    import backupr
+    
+    backupr.make_backup('my_db_name', 'my_db_user', 'my_db_pass', to_address='john@example.com', gmail_user='myusername@gmail.com', gmail_pw='mygmailpassword')
+
+
+## Available Keywords
+
+The available keyword options are as follows:
+                
+* `db_name` -- *Required* -- The name of your database.
+* `db_user` -- *Required* -- The username of your database.
+* `db_pw` -- *Default: `''`* -- The password of your database.
+* `db_host` -- *Default: `'127.0.0.1'`* -- The host of your database.
+* `backup_path` -- *Default: `''`* -- The location you want to store the backup file. Can be relative (e.g. `../foobar/` or absolute `/home/user/foobar/`)
+* `send_success_email` -- *Default: `True`* -- Whether or not to send an email when a backup is successfully run.
+* `to_address` -- *Default: `None`* -- The address to send the success email to. Optional if no success email is desired.
+* `gmail_user` -- *Default: `None`* -- The GMail username (e.g. `'myusername@gmail.com`) to use when sending the email. Optional if no success email is desired.
+* `gmail_pw` -- *Default: `None`* -- The GMail password for your account so we can send emails from GMail. Optional if no success email is desired.
+* `remove_sql` -- *Default: `True`* -- Whether or not to keep the SQL dump after it has been compressed. This is useful if you have the need to run the SQL directly after a backup or for debugging.
+
+
+## Notes & Caveats
+
+Note that you can only call this on a machine that hosts the MySQL database, running it from a remote machine does not work.
+
+This method will give you some responses when running from the command line to let you know what it is doing.
+
+Both a plain text and HTML email are sent to be compatible with email clients that cannot handle HTML emails.
+
+This repo could be forked to add support for different email sending methods but since GMail is so ubiquitous and since is makes it so easy to send emails from (without depending on the local machine to do it), I chose it as the method to send success emails from.
+
+
+## License
+
+Released under and MIT license.
