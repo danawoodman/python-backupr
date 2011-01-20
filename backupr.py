@@ -167,6 +167,9 @@ def make_backup(db_name, db_user, db_pw='', db_host='127.0.0.1', backup_path='',
             except e:
                 print '\nError removing SQL file: %s' % e
         
+        # Construct the email subject.
+        email_subject = 'Backup of "%s" successfully run!' % (db_name)
+        
         # Construct email messages.
         msg_text = """Dear Master,\n\nYour backup of the database '%s' on %s ran successfully!
 
@@ -198,7 +201,7 @@ Your Robotic Servant""" % (db_name, now_string,
         
         # Send message.
         if send_success_email and to_address and gmail_user and gmail_pw:
-            mail(gmail_user, gmail_pw, to_address, 'Backup successfully run!', 
+            mail(gmail_user, gmail_pw, to_address, email_subject, 
                 msg_text, msg_html, backup_full_path_tar if attach_tar else '')
         
         print "\nYour backup is complete!\n"
