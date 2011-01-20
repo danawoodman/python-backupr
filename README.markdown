@@ -30,6 +30,18 @@ Usage is strait forward, just put the `backupr.py` file on the `PythonPath` and 
 
 ... where `'/home/user/backupr/'` is the path to the directory that contains the `backupr.py` file (your git checkout of python-backupr). 
 
+To make this script really useful, run it from a crontab:
+
+    $ crontab -e
+
+... which will edit your user's crontab file. Then add in a line like this:
+
+    00 3 * * * /usr/local/bin/python2.6 /home/user/backupr/backupr.py
+
+... where `/usr/local/bin/python2.6` is the location to your Python executable and `/home/user/backupr/backupr.py` is the path to the `backupr.py` file (you could also do something like `~/backupr/backupr.py`). This will run the `backupr.py` file every morning at 3am. You can schedule backups how often you want using crontab.
+
+If you enable success emails you'll get a nice email in your inbox every morning letting you know your backup was run successfully. It's nice to have peace of mind!
+
 ## Available Keywords Arguments
 
 The available keyword options are as follows:
