@@ -16,6 +16,8 @@ The backups are named with the name of the DB, and the timestamp it was run so y
 Usage is strait forward, just put the `backupr.py` file on the `PythonPath` and then import it and run the `make_backup` method:
 
     import sys
+    
+    # Add path to backupr.py file so we can import it.
     sys.path.append('/home/user/backupr/')
     
     import backupr
@@ -38,7 +40,7 @@ To make this script really useful, run it from a crontab:
 
     00 3 * * * /usr/local/bin/python2.6 /home/user/backupr/backupr.py
 
-... where `/usr/local/bin/python2.6` is the location to your Python executable and `/home/user/backupr/backupr.py` is the path to the `backupr.py` file (you could also do something like `~/backupr/backupr.py`). This will run the `backupr.py` file every morning at 3am. You can schedule backups how often you want using crontab.
+... where `/usr/local/bin/python2.6` is the location to your Python executable and `/home/user/backupr/backupr.py` is the path to the `backupr.py` file (you could also do something like `~/backupr/backupr.py`). This will run the `backupr.py` file every morning at 3am. You can schedule backups however often you want using crontab.
 
 If you enable success emails you'll get a nice email in your inbox every morning letting you know your backup was run successfully. It's nice to have peace of mind!
 
