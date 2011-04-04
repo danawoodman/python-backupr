@@ -192,7 +192,7 @@ def make_backup(db_name, db_user, db_pw='', db_host='127.0.0.1', backup_path='',
     
     # Make the backup folder.
     try:
-        os.mkdir(backup_path)
+        os.mkdir(expanded_path)
     except OSError, e:
         color_print("\nBackup directory already exists, skipping...", 'gray')
     
