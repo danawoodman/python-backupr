@@ -5,10 +5,51 @@ import datetime
 import smtplib
 import tarfile
 import subprocess
+
 from email.MIMEMultipart import MIMEMultipart
 from email.MIMEBase import MIMEBase
 from email.MIMEText import MIMEText
 from email import Encoders
+
+# Function to print colors on the command line.
+def color_print(msg, color=None):
+    """
+    Print colored console output.
+    
+    Color choices are: 
+        'gray'
+        'green'
+        'red'
+        'yellow'
+        'purple'
+        'magenta'
+        'cyan'
+    
+    Example::
+        color_print("Here is a message...", 'red')
+    """
+    if not msg:
+        print "You must pass a message to the color_print function!"
+        return
+    
+    # Declare closing.
+    end = '\033[0m'
+    
+    # Declare print colors.
+    colors = {
+        'gray': '\033[90m',
+        'green': '\033[92m',
+        'red': '\033[91m',
+        'yellow': '\033[93m',
+        'purple': '\033[94m',
+        'magenta': '\033[95m',
+        'cyan': '\033[96m',
+    }
+    
+    if color in colors.keys():
+        print colors[color] + msg + end
+    else:
+        print msg
 
 def mail(gmail_user, gmail_pw, to, subject='(No Subject)', text='', html=None, attach=None):
     """
@@ -53,8 +94,8 @@ password (gmail_pw) to send an email!"""
     mailServer.close()
     
     # Log message to console.
-    print '\nMessage sent!'
-    print '    To: %s\n    Subject: %s' % (msg['To'], msg['Subject'])
+    color_print('\nMessage sent!', 'green')
+    color_print('    To: %s\n    Subject: %s' % (msg['To'], msg['Subject']), 'green')
     # print '%s' % msg.as_string()
 
 def confirm(prompt=None, resp=False):
@@ -121,91 +162,123 @@ def make_backup(db_name, db_user, db_pw='', db_host='127.0.0.1', backup_path='',
     
     Both a plain text and HTML email are sent to be compatible with email 
     clients that cannot handle HTML emails.
-    """
-    try:
-        
-        # Get current timestamp for the email message.
-        now = datetime.datetime.now()
-        now_string = now.strftime('%A, %B %d %Y at %I:%M %p') # e.g. Monday, December 31 2010 at 8:53 PM
-        
-        # Create a timestamped backup file and set the directory we are saving things to.
-        backup_string = 'db-%s_backup_%s' % (db_name, now.strftime('%Y-%m-%d-%H-%M'))
-        backup_file_sql = '%s.sql' % backup_string
-        backup_file_tar = '%s.tar.gz' % backup_file_sql
-        backup_full_path_sql = '%s%s' % (backup_path, backup_file_sql)
-        backup_full_path_tar = '%s%s' % (backup_path, backup_file_tar)
-        
-        # Make the backup folder.
-        try:
-            os.mkdir(backup_path)
-        except:
-            pass
-        
-        # Construct the command.
-        sub = 'mysqldump -u%s -p%s --add-locks --flush-privileges --add-drop-table \
---complete-insert --extended-insert --single-transaction --database %s > %s' % (db_user, db_pw, db_name, backup_full_path_sql)
-        
-        # Dump the data.
-        subprocess.call(sub, shell=True)
     
-        print '\nDumping MySQL database to: %s' % backup_full_path_sql
-        
-        print '\nRunning command:\n%s' % sub
-        
-        # Create the tar.gz archive.
-        tar = tarfile.open(backup_full_path_tar, 'w:gz')
-        tar.add(backup_full_path_sql, backup_file_sql, recursive=False) # Don't save the directories, just the SQL file...
-        tar.close()
-        
-        print '\nCreated archive at: %s' % backup_full_path_tar
-        
-        # Delete the SQL file.
-        if remove_sql:
-            try:
-                os.remove(backup_full_path_sql)
-                print '\nDeleted SQL file: %s' % backup_full_path_sql
-            except e:
-                print '\nError removing SQL file: %s' % e
-        
-        # Construct the email subject.
-        email_subject = 'Backup of "%s" successfully run!' % (db_name)
-        
-        # Construct email messages.
-        msg_text = """Dear Master,\n\nYour backup of the database '%s' on %s ran successfully!
+    Example::
+        make_backup('db_name', 
+                    'db_user', 
+                    'db_pass', 
+                    backup_path='/home/user/backups/', 
+                    send_success_email=True, 
+                    to_address='john@example.com', 
+                    gmail_user='example@gmail.com', 
+                    gmail_pw='my_gmail_pass')
+    
+    """
+    
+    # Get current timestamp for the email message.
+    now = datetime.datetime.now()
+    now_string = now.strftime('%A, %B %d %Y at %I:%M %p') # e.g. Monday, December 31 2010 at 8:53 PM
+    now_timestamp = now.strftime('%Y-%m-%d-%H-%M')
+    
+    # Expand the path so it is an absolute path, not relative.
+    expanded_path = os.path.abspath(backup_path)
+    
+    # Create a timestamped backup file and set the directory we are saving things to.
+    backup_string = 'db-%s-backup-%s' % (db_name, now_timestamp)
+    backup_file_sql = '%s.sql' % backup_string
+    backup_file_tar = '%s.tar.gz' % backup_file_sql
+    backup_full_path_sql = os.path.join(expanded_path, backup_file_sql)
+    backup_full_path_tar = os.path.join(expanded_path, backup_file_tar)
+    
+    # Make the backup folder.
+    try:
+        os.mkdir(backup_path)
+    except OSError, e:
+        color_print("\nBackup directory already exists, skipping...", 'gray')
+    
+    # Construct the command.
+    sub = "mysqldump \
+            -u%(db_user)s%(db_pass)s \
+            --add-locks \
+            --flush-privileges \
+            --add-drop-table \
+            --complete-insert \
+            --extended-insert \
+            --single-transaction \
+            --database %(db_name)s > %(backup_path)s" % {
+                'db_user': db_user, 
+                'db_pass': " -p" + db_pw if db_pw != '' else '', 
+                'db_name': db_name, 
+                'backup_path': backup_full_path_sql
+            }
+    
+    # Check the subprocess call and catch exceptions. 
+    subprocess.check_call(sub, shell=True)
+    
+    # Dump the data.
+    subprocess.call(sub, shell=True)
+    
+    # print '\nRunning command:\n%s' % sub
+    color_print('\nDumped MySQL database to: %s' % backup_full_path_sql, 'green')
+    
+    # Create the tar.gz archive.
+    tar = tarfile.open(backup_full_path_tar, 'w:gz')
+    tar.add(backup_full_path_sql, backup_file_sql, recursive=False) # Don't save the directories, just the SQL file...
+    tar.close()
+    
+    color_print('\nCreated archive at: %s' % backup_full_path_tar, 'green')
+    
+    # Delete the SQL file.
+    if remove_sql:
+        try:
+            os.remove(backup_full_path_sql)
+            color_print('\nDeleted SQL file: %s' % backup_full_path_sql, 'green')
+        except OSError, e:
+            color_print('\nError removing SQL file: %s' % e, 'red')
+    
+    # Construct the email subject.
+    email_subject = 'Backup of "%s" successfully run!' % (db_name)
+    
+    # Construct email messages.
+    msg_text = """Dear Master,\n\nYour backup of the database '%(db_name)s' on %(when)s ran successfully!
 
-The back up is stored here:\n %s %s
+The back up is stored on the server here:\n %(backup_path)s %(attachment_message)s
 
 Love,
-Your Robotic Servant""" % (db_name, now_string, 
-                                os.path.abspath(backup_full_path_tar), 
-                                '\n\nThe backup is also attached to this email.' if attach_tar else '')
-        msg_html = """
-        
-        <p><em>Dear Master,</em></p>
-        
-        <p>Your backup of the database '<em>%s</em>' on <strong>%s</strong> ran successfully!</p>
-        
-        <p>
-            The back up is stored here: <br />
-            <em>%s</em>
-        </p>
-        
-        %s
-        
-        <p><em>Love,</em></p>
-        
-        <p><strong>Your Robotic Servant</strong></p>
-        
-        """ % (db_name, now_string, os.path.abspath(backup_full_path_tar), 
-                '<p>The backup is also attached to this email.</p>' if attach_tar else '')
-        
-        # Send message.
-        if send_success_email and to_address and gmail_user and gmail_pw:
-            mail(gmail_user, gmail_pw, to_address, email_subject, 
-                msg_text, msg_html, backup_full_path_tar if attach_tar else '')
-        
-        print "\nYour backup is complete!\n"
-        
-    except:
-         print 'Shit done broke...'
+Your Robotic Servant""" % {
+                'db_name': db_name, 
+                'when': now_string, 
+                'backup_path': os.path.abspath(backup_full_path_tar), 
+                'attachment_message': '\n\nThe backup is also attached to this email.' if attach_tar else ''
+            }
+    msg_html = """
+    
+    <p><em>Dear Master,</em></p>
+    
+    <p>Your backup of the database '<em>%(db_name)s</em>' on <strong>%(when)s</strong> ran successfully!</p>
+    
+    <p>
+        The back up is stored on the server here: <br />
+        <em>%(backup_path)s</em>
+    </p>
+    
+    %(attachment_message)s
+    
+    <p><em>Love,</em></p>
+    
+    <p><strong>Your Robotic Servant</strong></p>
+    
+    """ % {
+                'db_name': db_name, 
+                'when': now_string, 
+                'backup_path': os.path.abspath(backup_full_path_tar), 
+                'attachment_message': '\n\nThe backup is also attached to this email.' if attach_tar else ''
+            }
+    
+    # Send message.
+    if send_success_email and to_address and gmail_user and gmail_pw:
+        mail(gmail_user, gmail_pw, to_address, email_subject, 
+            msg_text, msg_html, backup_full_path_tar if attach_tar else '')
+    
+    color_print("\nYour backup is complete!\n", 'green')
 
