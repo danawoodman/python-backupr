@@ -15,11 +15,12 @@ The backups are named with the name of the DB, and the timestamp it was run (e.g
 ## Usage
 
 Usage is strait forward, just put the `backupr.py` file on the `PythonPath` and then import it and run the `make_backup` method. Create a file somewhere that will call the `backupr.py` file, like your home folder (e.g. `/home/user/run_backups.py`):
-
+    
+    import os
     import sys
     
     # Add path to backupr.py file so we can import it.
-    sys.path.append('/home/user/backupr/')
+    sys.path.append(os.path.abspath('~/backupr/'))
     
     import backupr
     
@@ -47,9 +48,21 @@ To make this script really useful, run it from a crontab. First, edit your cront
 
     crontab -e
 
-Then add in a line like this:
+Then add in a crontab like this (note the first block is useful for referencing how to write a crontab job):
 
-    @daily /usr/local/bin/python2.6 ~/backupr/backupr.py
+    # ------------- minute (0 - 59)
+    # | ----------- hour (0 - 23)
+    # | | --------- day of month (1 - 31)
+    # | | | ------- month (1 - 12)
+    # | | | | ----- day of week (0 - 6) (Sunday=0)
+    # | | | | |
+    # * * * * * command to be executed
+
+    # Run database backup script.
+    @daily /usr/local/bin/python2.6 ~/run_backups.py
+
+    # Remove all backups that are 7 days old or older.
+    @daily find ~/backups -mtime +6 -print | xargs rm
 
 ... where `/usr/local/bin/python2.6` is the location to your Python executable and `~/backupr/backupr.py` is the path to the `backupr.py` file. This will run the `backupr.py` file every night at midnight (server time). You can schedule backups however often you want using crontab.
 
