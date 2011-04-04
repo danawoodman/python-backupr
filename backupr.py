@@ -180,8 +180,9 @@ def make_backup(db_name, db_user, db_pw='', db_host='127.0.0.1', backup_path='',
     now_string = now.strftime('%A, %B %d %Y at %I:%M %p') # e.g. Monday, December 31 2010 at 8:53 PM
     now_timestamp = now.strftime('%Y-%m-%d-%H-%M')
     
-    # Expand the path so it is an absolute path, not relative.
-    expanded_path = os.path.abspath(backup_path)
+    # Expand the path so it is an absolute path, not relative. Handle paths 
+    # relative to the user's home directory.
+    expanded_path = os.path.abspath(os.path.expanduser(backup_path))
     
     # Create a timestamped backup file and set the directory we are saving things to.
     backup_string = 'db-%s-backup-%s' % (db_name, now_timestamp)
@@ -191,10 +192,8 @@ def make_backup(db_name, db_user, db_pw='', db_host='127.0.0.1', backup_path='',
     backup_full_path_tar = os.path.join(expanded_path, backup_file_tar)
     
     # Make the backup folder.
-    try:
-        os.mkdir(expanded_path)
-    except OSError, e:
-        color_print("\nBackup directory already exists, skipping...", 'gray')
+    if not os.path.exists(expanded_path):
+        os.makedirs(expanded_path)
     
     # Construct the command.
     sub = "mysqldump \
