@@ -47,7 +47,7 @@ def color_print(msg, color=None):
     }
     
     if color in colors.keys():
-        print colors[color] + msg + end
+        print colors[color] + str(msg) + end
     else:
         print msg
 
@@ -96,7 +96,6 @@ password (gmail_pw) to send an email!"""
     # Log message to console.
     color_print('\nMessage sent!', 'green')
     color_print('    To: %s\n    Subject: %s' % (msg['To'], msg['Subject']), 'green')
-    # print '%s' % msg.as_string()
 
 def confirm(prompt=None, resp=False):
     """
