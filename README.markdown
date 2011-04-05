@@ -20,7 +20,7 @@ Usage is strait forward, just put the `backupr.py` file on the `PythonPath` and 
     import sys
     
     # Add path to backupr.py file so we can import it.
-    sys.path.append(os.path.abspath('~/backupr/'))
+    sys.path.append('/home/user/backupr/')
     
     import backupr
     
@@ -57,14 +57,14 @@ Then add in a crontab like this (note the first block is useful for referencing 
     # | | | | ----- day of week (0 - 6) (Sunday=0)
     # | | | | |
     # * * * * * command to be executed
-
+    
     # Run database backup script.
     @daily /usr/local/bin/python2.6 ~/run_backups.py
-
+    
     # Remove all backups that are 7 days old or older.
     @daily find ~/backups -mtime +6 -print | xargs rm
 
-... where `/usr/local/bin/python2.6` is the location to your Python executable and `~/backupr/backupr.py` is the path to the `backupr.py` file. This will run the `backupr.py` file every night at midnight (server time). You can schedule backups however often you want using crontab.
+... where `/usr/local/bin/python2.6` is the location to your Python executable and `~/run_backups.py` is the path your `run_backups.py` file. This will run the `run_backups.py` file every night at midnight (server time). You can schedule backups however often you want using crontab.
 
 If you enable success emails you'll get a nice email in your inbox every morning letting you know your backup was run successfully. It's nice to have peace of mind!
 
